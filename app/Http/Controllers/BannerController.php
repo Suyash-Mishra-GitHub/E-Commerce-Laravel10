@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Banner;
 use Illuminate\Support\Str;
+
 class BannerController extends Controller
 {
     /**
@@ -14,8 +15,8 @@ class BannerController extends Controller
      */
     public function index()
     {
-        $banner=Banner::orderBy('id','DESC')->paginate(10);
-        return view('backend.banner.index')->with('banners',$banner);
+        $banner = Banner::orderBy('id', 'DESC')->paginate(10);
+        return view('backend.banner.index')->with('banners', $banner);
     }
 
     /**
@@ -37,26 +38,25 @@ class BannerController extends Controller
     public function store(Request $request)
     {
         // return $request->all();
-        $this->validate($request,[
-            'title'=>'string|required|max:50',
-            'description'=>'string|nullable',
-            'photo'=>'string|required',
-            'status'=>'required|in:active,inactive',
+        $this->validate($request, [
+            'title' => 'string|required|max:50',
+            'description' => 'string|nullable',
+            'photo' => 'string|required',
+            'status' => 'required|in:active,inactive',
         ]);
-        $data=$request->all();
-        $slug=Str::slug($request->title);
-        $count=Banner::where('slug',$slug)->count();
-        if($count>0){
-            $slug=$slug.'-'.date('ymdis').'-'.rand(0,999);
+        $data = $request->all();
+        $slug = Str::slug($request->title);
+        $count = Banner::where('slug', $slug)->count();
+        if ($count > 0) {
+            $slug = $slug . '-' . date('ymdis') . '-' . rand(0, 999);
         }
-        $data['slug']=$slug;
+        $data['slug'] = $slug;
         // return $slug;
-        $status=Banner::create($data);
-        if($status){
-            request()->session()->flash('success','Banner successfully added');
-        }
-        else{
-            request()->session()->flash('error','Error occurred while adding banner');
+        $status = Banner::create($data);
+        if ($status) {
+            session()->flash('success', 'Banner successfully added');
+        } else {
+            session()->flash('error', 'Error occurred while adding banner');
         }
         return redirect()->route('banner.index');
     }
@@ -80,8 +80,8 @@ class BannerController extends Controller
      */
     public function edit($id)
     {
-        $banner=Banner::findOrFail($id);
-        return view('backend.banner.edit')->with('banner',$banner);
+        $banner = Banner::findOrFail($id);
+        return view('backend.banner.edit')->with('banner', $banner);
     }
 
     /**
@@ -93,14 +93,14 @@ class BannerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $banner=Banner::findOrFail($id);
-        $this->validate($request,[
-            'title'=>'string|required|max:50',
-            'description'=>'string|nullable',
-            'photo'=>'string|required',
-            'status'=>'required|in:active,inactive',
+        $banner = Banner::findOrFail($id);
+        $this->validate($request, [
+            'title' => 'string|required|max:50',
+            'description' => 'string|nullable',
+            'photo' => 'string|required',
+            'status' => 'required|in:active,inactive',
         ]);
-        $data=$request->all();
+        $data = $request->all();
         // $slug=Str::slug($request->title);
         // $count=Banner::where('slug',$slug)->count();
         // if($count>0){
@@ -108,12 +108,11 @@ class BannerController extends Controller
         // }
         // $data['slug']=$slug;
         // return $slug;
-        $status=$banner->fill($data)->save();
-        if($status){
-            request()->session()->flash('success','Banner successfully updated');
-        }
-        else{
-            request()->session()->flash('error','Error occurred while updating banner');
+        $status = $banner->fill($data)->save();
+        if ($status) {
+            session()->flash('success', 'Banner successfully updated');
+        } else {
+            session()->flash('error', 'Error occurred while updating banner');
         }
         return redirect()->route('banner.index');
     }
@@ -126,13 +125,12 @@ class BannerController extends Controller
      */
     public function destroy($id)
     {
-        $banner=Banner::findOrFail($id);
-        $status=$banner->delete();
-        if($status){
-            request()->session()->flash('success','Banner successfully deleted');
-        }
-        else{
-            request()->session()->flash('error','Error occurred while deleting banner');
+        $banner = Banner::findOrFail($id);
+        $status = $banner->delete();
+        if ($status) {
+            session()->flash('success', 'Banner successfully deleted');
+        } else {
+            session()->flash('error', 'Error occurred while deleting banner');
         }
         return redirect()->route('banner.index');
     }
